@@ -23,16 +23,6 @@ func distance(action int) float64 {
 	return float64(action) * lenStep / mInKm
 }
 
-// swimDistance возвращает дистанцию(в километрах), которую преодолел пользователь за время плавания.
-//
-// Параметры:
-//
-// lenghtpool int - длина бассейна в метрах.
-// countPool int - сколько раз пользователь переплыл бассейн.
-func swimDistance(lengthPool, countPool int) float64 {
-	return float64(lengthPool) * float64(countPool) / mInKm
-}
-
 // meanSpeed возвращает значение средней скорости движения во время тренировки.
 //
 // Параметры:
@@ -68,7 +58,7 @@ func ShowTrainingInfo(action int, trainingType string, duration, weight, height 
 		calories := WalkingSpentCalories(action, duration, weight, height) // вызовите здесь необходимую функцию
 		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n", trainingType, duration, distance, speed, calories)
 	case trainingType == "Плавание":
-		distance := swimDistance(lengthPool, countPool)                            // вызовите здесь необходимую функцию
+		distance := swimmingMeanSpeed(lengthPool, countPool, duration) * duration  // вызовите здесь необходимую функцию
 		speed := swimmingMeanSpeed(lengthPool, countPool, duration)                // вызовите здесь необходимую функцию
 		calories := SwimmingSpentCalories(lengthPool, countPool, duration, weight) // вызовите здесь необходимую функцию
 		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n", trainingType, duration, distance, speed, calories)
@@ -110,7 +100,7 @@ const (
 // weight float64 — вес пользователя.
 // height float64 — рост пользователя.
 func WalkingSpentCalories(action int, duration, weight, height float64) float64 {
-	speedInSec := meanSpeed(action, duration) * 1000
+	speedInSec := meanSpeed(action, duration) / kmhInMsec
 	caloriesWalk := ((walkingCaloriesWeightMultiplier*weight + (math.Pow(speedInSec, 2)/(height/cmInM))*walkingSpeedHeightMultiplier*weight) * duration * minInH)
 	return caloriesWalk
 
